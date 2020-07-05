@@ -7,26 +7,40 @@
 #    http://shiny.rstudio.com/
 #
 # Learn about shinyapps.io
+#
+# Reference for Tutorial, ShinyWidgets: https://www.davidsolito.com/post/conditional-drop-down-in-shiny/
 
 library(readxl)
-library(shiny)
 library(dplyr)
+library(shiny)
+library(shinyWidgets)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-
-    # Application title
-    titlePanel("ENGAGEDurham Input from Listening and Learning Engagement"),
-
-    fluidRow(
-        column(12,
-               dataTableOutput(outputId = 'dataTable')
+ui = pageWithSidebar(
+    headerPanel("Select Filters"),
+    sidebarPanel(
+        selectizeGroupUI(
+            id = "my-filters",
+            inline = FALSE,
+            params = list(
+                var_one = list(inputId = "Topic_1", 
+                                title = "Select Topic 1s", 
+                                placeholder = 'select'),
+                var_two = list(inputId = "Topic_2", 
+                                title = "Select Topic 2s", 
+                                placeholder = 'select'),
+                var_three = list(inputId = "Group", 
+                                title = "Select Group", 
+                                placeholder = 'select')
+            )
         )
+    ),
+    mainPanel(
+        titlePanel("ENGAGEDurham Input from Listening and Learning Engagement"),
+        tableOutput("table")
     )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+server = function(input, output, session) {
 
     readfile <- 'Input from Listening and Learning Engagement.xlsx'
     data1 <- read_excel(readfile,1)
@@ -38,8 +52,19 @@ server <- function(input, output) {
     data <- full_join(data1, data2)
     data <- full_join(data, data3)
     
-    output$dataTable <- renderDataTable(data)
+    res_mod <- callModule(
+        module = selectizeGroupServer,
+        id = "my-filters",
+        data = data,
+        vars = colnames(data)
+    )
+
+    output$table <- renderTable({
+        res_mod()
+    })
 }
+    
+options = list(height = 500)
 
 # Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server, options = options)
