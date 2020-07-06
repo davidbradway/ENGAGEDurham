@@ -15,29 +15,30 @@ library(dplyr)
 library(shiny)
 library(shinyWidgets)
 
-ui = pageWithSidebar(
-    headerPanel("Select Filters"),
-    sidebarPanel(
-        selectizeGroupUI(
-            id = "my-filters",
-            inline = FALSE,
-            params = list(
-                var_one = list(inputId = "Topic_1", 
-                                title = "Select Topic 1s", 
-                                placeholder = 'select'),
-                var_two = list(inputId = "Topic_2", 
-                                title = "Select Topic 2s", 
-                                placeholder = 'select'),
-                var_three = list(inputId = "Group", 
-                                title = "Select Group", 
-                                placeholder = 'select')
-            )
+ui <- fluidPage(
+    titlePanel("ENGAGEDurham Input from Listening and Learning Engagement"),
+    hr(),
+    fluidRow(
+        column(12,
+               selectizeGroupUI(
+                   id = "my-filters",
+                   inline = TRUE,
+                   btn_label = "Reset Filters",
+                   params = list(
+                       var_one = list(inputId = "Topic_1", 
+                                      title = "Select Topic 1s", 
+                                      placeholder = 'select'),
+                       var_two = list(inputId = "Topic_2", 
+                                      title = "Select Topic 2s", 
+                                      placeholder = 'select'),
+                       var_three = list(inputId = "Group", 
+                                        title = "Select Group", 
+                                        placeholder = 'select')
+                   )
+               )
         )
     ),
-    mainPanel(
-        titlePanel("ENGAGEDurham Input from Listening and Learning Engagement"),
-        tableOutput("table")
-    )
+    tableOutput("table")
 )
 
 server = function(input, output, session) {
