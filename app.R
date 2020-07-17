@@ -16,7 +16,7 @@ library(shiny)
 library(shinyWidgets)
 
 ui <- fluidPage(
-    titlePanel("ENGAGEDurham Input from Listening and Learning Engagement"),
+    titlePanel("EngageDurham Input from Listening and Learning Sessions"),
     hr(),
     fluidRow(
         column(12,
